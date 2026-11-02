@@ -63,5 +63,5 @@ GEMINI_MODEL="You can add any model. I use gemini flash-lite 3.5"
 To test the LLM client configuration independently, run:
 
 ```bash
-python llm_client.py
+Didn't complete the project yey. I will update soon.
 ```
