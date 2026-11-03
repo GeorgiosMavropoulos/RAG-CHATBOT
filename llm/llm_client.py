@@ -10,12 +10,13 @@ class LLM:
         self.model_name = os.getenv("GEMINI_MODEL")
 
 
-    def get_llm(self,question:str)->str:
+    def get_llm(self,question)->str:
 
         """Call the LLM"""
         response = self.client.models.generate_content(
         model=self.model_name,
         contents=question,
+       
         config=types.GenerateContentConfig(
             temperature=0.2 
         )
