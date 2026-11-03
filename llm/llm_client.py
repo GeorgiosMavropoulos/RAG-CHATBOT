@@ -22,9 +22,5 @@ class LLM:
     )
         return response.text
 
-llm = LLM()
-question ='Are you online?'
-q = llm.get_llm(question)
-print(q)
 
 
