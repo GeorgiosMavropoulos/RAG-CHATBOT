@@ -1,0 +1,5 @@
+[project]
+name = "rag-chatbot"
+version = "0.1.0"
+description = "RAG Chatbot App"
+dependencies = []
