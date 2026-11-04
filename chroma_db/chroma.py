@@ -3,7 +3,7 @@ import logging
 from typing import Dict, Any, Optional
 from langchain_community.document_loaders import  PyPDFLoader, TextLoader
 import chromadb
-from langchain_google_genai import GoogleGenerativeAIEmbeddings
+
 from chromadb.errors import ChromaError
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 
