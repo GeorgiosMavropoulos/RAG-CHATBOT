@@ -9,7 +9,8 @@ st.title("🤖 Chatbot with Document Upload")
 
 # 1. Sidebar for Document Upload
 with st.sidebar:
-    st.header("📁 Upload Your Document")
+    st.header("📁 Upload Your Document. It will be stored on temporary file. After refreshing or leaving the site, the doc will be lost. If you" \
+    "you want you can use my mock story from github.")
     uploaded_file = st.file_uploader(
         "Supported files: TXT", 
         type=["txt"]
