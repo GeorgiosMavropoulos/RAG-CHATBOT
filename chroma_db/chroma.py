@@ -1,9 +1,14 @@
 import os
 import logging
-from typing import List, Dict, Any, Optional
+from typing import Dict, Any, Optional
+from langchain_community.document_loaders import  PyPDFLoader, TextLoader
 import chromadb
+from langchain_google_genai import GoogleGenerativeAIEmbeddings
 from chromadb.errors import ChromaError
 from langchain_text_splitters import RecursiveCharacterTextSplitter
+
+
+
 
 # Configure logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -34,19 +39,38 @@ class ChromaDocumentManager:
             logging.error(f"Failed to initialize Chroma DB: {str(e)}")
             raise RuntimeError(f"Database initialization failed: {e}")
 
-    def load_and_index_txt(self, file_path: str, chunk_size: int = 1000, chunk_overlap: int = 200) -> bool:
+
+    def get_file_find_its_type(self, file_path: str):
+        """Helper method to user pdf loader if user inputs a pdf file"""
+
+        #get file's extension
+        ext = ext = os.path.splitext(file_path)[1].lower()
+        if ext == ".pdf":
+         pages = PyPDFLoader(file_path).load()
+         return "\n\n".join(p.page_content for p in pages)
+        elif  ext == ".txt":
+            with open(file_path, "r", encoding="utf-8") as f:
+             return f.read()
+        else:
+            raise ValueError(f"Unsupported file type: {ext}")
+
+        
+
+    def load_and_index_txt(self, file_path: str, chunk_size: int = 1000, chunk_overlap: int = 120) -> bool:
         """
         Reads a text file, splits it into chunks, and indexes it into the vector database.
         """
+ 
         if not os.path.exists(file_path):
             logging.error(f"File not found: {file_path}")
             return False
 
+
         try:
-            # 1. Read the raw text file
+            #get file's type
             logging.info(f"Reading file: {file_path}")
-            with open(file_path, "r", encoding="utf-8") as f:
-                raw_text = f.read()
+            raw_text = self.get_file_find_its_type(file_path)
+            print(raw_text[:1000])
 
             if not raw_text.strip():
                 logging.warning(f"File {file_path} is empty. Skipping indexing.")
@@ -92,7 +116,7 @@ class ChromaDocumentManager:
             logging.error(f"Unexpected error occurred during indexing: {str(e)}")
             return False
 
-    def query_documents(self, query_text: str, n_results: int = 3) -> Optional[Dict[str, Any]]:
+    def query_documents(self, query_text: str, n_results: int = 20) -> Optional[Dict[str, Any]]:
         """
         Queries the database for the most semantically relevant text chunks.
         """
@@ -102,6 +126,8 @@ class ChromaDocumentManager:
                 query_texts=[query_text],
                 n_results=n_results
             )
+            logging.info(f"Retrieved: {results['documents']}")
+            logging.info(f"Distances: {results['distances']}")
             return results
         except ChromaError as ce:
             logging.error(f"Chroma DB query execution failed: {str(ce)}")

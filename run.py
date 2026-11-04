@@ -42,7 +42,7 @@ class Run:
     def query_vector_database(question):
         results = chrom.query_documents(
             query_text=question,
-            n_results=1
+            n_results=20
         )
         return results
 
@@ -50,8 +50,6 @@ class Run:
     def main_run(self,user_question):
         """Parse any document to chroma db and call the LLM to question it"""
 
-        
-        
 
         result_t = self.query_vector_database(user_question)
         final_prompt = prompt_temps.QA_RAG_TEMPLATE.format(
@@ -59,6 +57,8 @@ class Run:
             context=result_t
         )
         response_llm = self.invoke_llm(final_prompt)
+        
+        
         return response_llm
 
    

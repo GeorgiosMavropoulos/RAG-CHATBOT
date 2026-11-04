@@ -12,18 +12,20 @@ with st.sidebar:
     st.header("📁 Upload Your Document. After closing the website, the doc will be lost. If you" \
     "you want you can use my mock story from github.")
     uploaded_file = st.file_uploader(
-        "Supported files: TXT", 
-        type=["txt"]
+        "Supported files: TXT, PDF", 
+        type=["txt","pdf"]
     )
     
     if uploaded_file is not None:
         # Avoid re-writing/re-indexing the exact same file during UI reruns
         if "indexed_file" not in st.session_state or st.session_state["indexed_file"] != uploaded_file.name:
             with st.spinner("Writing temp file & indexing into ChromaDB..."):
-                
+
+                #retrieve file's extension to be able to load both txt and pdf
+                ext = os.path.splitext(uploaded_file.name)[1].lower() 
                 # Create a temporary file on disk so chrom.load_and_index_txt can read a path string
-                with tempfile.NamedTemporaryFile(delete=False, suffix=".txt") as temp_file:
-                    temp_file.write(uploaded_file.getbuffer())
+                with tempfile.NamedTemporaryFile(delete=False, suffix=ext) as temp_file:
+                    temp_file.write(uploaded_file.getvalue())
                     temp_filepath = temp_file.name
                 
                 # Save the temp path to session state and run backend indexer
@@ -70,3 +72,4 @@ if user_input := st.chat_input("Type your message here..."):
         
     # Add assistant response to chat history
     st.session_state.messages.append({"role": "assistant", "content": bot_response})
+  

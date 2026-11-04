@@ -9,12 +9,18 @@ class Prompts:
 
 
 
-    QA_RAG_TEMPLATE = """
+    QA_RAG_TEMPLATE = """You are an assistant for question-answering tasks. 
+    Use the following pieces of retrieved context to answer the question. 
 
-You are an assistant for question-answering tasks. Use the following pieces of retrieved context to answer the question. If you don't know the answer, just say that you `I can't help you sir`. Use three sentences maximum and keep the answer concise.
-Question: {question} 
-Context: {context} 
-Answer:
+    If the context does not contain the answer, say "I cannot find the answer in the provided documents." 
+    Do not use outside knowledge. Keep the answer concise (maximum three sentences).
+
+    Context:
+    {context}
+
+    Question: {question}
+
+    Answer:
+    """
 
 
-"""
