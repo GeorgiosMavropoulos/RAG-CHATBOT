@@ -78,5 +78,17 @@ When you initialize the application locally, the system coordinates across front
                                                    ▼
                                            [ Gemini 3.5 Flash ]
 
+1. Document Upload & Temp IO: 
+When a user uploads a text file (.txt) via the Streamlit sidebar, the application intercepts the stream and writes it to a safe, 
+temporary location on your local machine using the Python tempfile utility.
 
+2. Local Vector Ingestion: 
+The generated path is forwarded directly to main.py.
+ The ingestion engine reads the temporary path, chunks the textual content via LangChain,
+  maps its structural context, and pushes the parsed vector representations to your local ./chroma_db/ folder.
+
+3. Session Querying & RAG Strategy: 
+As questions enter the chat box, Streamlit passes the query parameter down to the agent architecture.
+Your vector repository retrieves semantic references locally, formats them cleanly within your RAG system,
+updates context loops via LangGraph, and lets Gemini generate precise responses.
 
