@@ -16,7 +16,7 @@ class Run:
         pass
 
     @staticmethod
-    def add_file(file):
+    def add_file(file,display_name = None):
         """Add file to chromadb"""
         chrom.load_and_index_txt(
         file_path=file,  
