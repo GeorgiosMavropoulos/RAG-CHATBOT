@@ -3,8 +3,8 @@ import logging
 from typing import Dict, Any, Optional
 #from langchain_core.document_loaders import TextLoader
 from pypdf import PdfReader
-import chromadb
 
+import chromadb
 from chromadb.errors import ChromaError
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 

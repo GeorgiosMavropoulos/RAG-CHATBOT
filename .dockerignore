@@ -1,0 +1,15 @@
+.git
+.github
+.gitignore
+__pycache__
+*.pyc
+.venv
+venv
+.env
+
+my_chroma_db
+tests
+.pytest_cache
+.pre-commit-config.yaml
+Dockerfile
+.dockerignore
