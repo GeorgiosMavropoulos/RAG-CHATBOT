@@ -137,16 +137,23 @@ class ChromaDocumentManager:
             return None
 
 
+    def list_sources(self) -> list[str]:
+        """Returns the unique source paths stored in the collection."""
+        data = self.collection.get(include=["metadatas"])
+        return sorted({m["source"] for m in data["metadatas"] if m and "source" in m})
+
+
 
     def delete_document(self, file_path: str) -> bool:
         """
         Deletes all chunks that came from a specific file, using the 'source' metadata.
         """
         try:
-            logging.info(f"Deleting chunks from source: {file_path}")
+            before = self.collection.count()
             self.collection.delete(where={"source": file_path})
-            logging.info(f"Deleted chunks for {file_path}.")
-            return True
+            after = self.collection.count()
+            logging.info(f"Deleted {before - after} chunks for source: {file_path}")
+            return after < before  
         except ChromaError as ce:
             logging.error(f"Chroma DB error while deleting document: {str(ce)}")
             return False
