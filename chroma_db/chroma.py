@@ -56,7 +56,7 @@ class ChromaDocumentManager:
 
         
 
-    def load_and_index_txt(self, file_path: str, chunk_size: int = 1000, chunk_overlap: int = 120) -> bool:
+    def load_and_index_txt(self, file_path: str, chunk_size: int = 1000, display_name: str = None, chunk_overlap: int = 120) -> bool:
         """
         Reads a text file, splits it into chunks, and indexes it into the vector database.
         """
@@ -90,11 +90,11 @@ class ChromaDocumentManager:
             metadatas = []
             
             base_filename = os.path.basename(file_path)
+            name = display_name or base_filename
             for i, chunk in enumerate(chunks):
                 documents.append(chunk)
-                # Create a unique ID combining filename and chunk index
                 ids.append(f"{base_filename}_chunk_{i}")
-                metadatas.append({"source": file_path, "chunk_index": i})
+                metadatas.append({"source": file_path, "name": name, "chunk_index": i})
 
             # 4. Insert chunks into Chroma DB collection
             logging.info(f"Adding chunks to collection '{self.collection_name}'...")
@@ -138,9 +138,14 @@ class ChromaDocumentManager:
 
 
     def list_sources(self) -> list[str]:
-        """Returns the unique source paths stored in the collection."""
+       
+        """Returns {display_name: source_path}."""
         data = self.collection.get(include=["metadatas"])
-        return sorted({m["source"] for m in data["metadatas"] if m and "source" in m})
+        docs = {}
+        for m in data["metadatas"]:
+            if m and "source" in m:
+                docs[m.get("name", m["source"])] = m["source"]
+        return docs
 
 
 
