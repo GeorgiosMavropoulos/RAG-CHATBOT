@@ -8,13 +8,20 @@ st.set_page_config(page_title="AI Chatbot with Document Upload", layout="centere
 st.title("🤖 Chatbot with Document Upload")
 
 # 1. Sidebar for Document Upload
+if "uploader_key" not in st.session_state:
+    st.session_state["uploader_key"] = 0
 with st.sidebar:
     st.header("📁 Upload Your Document. After closing the website, the doc will be lost. If you" \
     "you want you can use my mock story from github.")
+
+    #create a dynamic key file
+    current_key = f"file_uploader_{st.session_state['uploader_key']}"
     uploaded_file = st.file_uploader(
         "Supported files: TXT, PDF", 
-        type=["txt","pdf"]
+        type=["txt","pdf"],
+        key = current_key
     )
+    
     
     if uploaded_file is not None:
         # Avoid re-writing/re-indexing the exact same file during UI reruns
@@ -37,6 +44,49 @@ with st.sidebar:
             st.success(f"File '{uploaded_file.name}' indexed successfully!")
         else:
             st.sidebar.info(f"📁 '{uploaded_file.name}' is already loaded in Vector DB.")
+
+        if st.sidebar.button("❌ Clear & Reset DB"):
+        # rempve file from disk
+         if "temp_filepath" in st.session_state and os.path.exists(st.session_state["temp_filepath"]):
+            try:
+                os.remove(st.session_state["temp_filepath"])
+            except Exception:
+                pass
+        
+        # Καθαρισμός των μεταβλητών κατάστασης
+        st.session_state.pop("indexed_file", None)
+        st.session_state.pop("temp_filepath", None)
+
+        #remove file from the bar
+        st.session_state["uploader_key"] += 1
+        st.session_state["flash"] = "File was uploaded !"
+        st.rerun()
+
+        if "flash" in st.session_state:
+                            st.success(st.session_state.pop("flash"))
+
+
+
+#delete file
+with st.sidebar:
+    st.header("Delete File")
+    sources = run_.get_sources()
+
+    if sources:
+        to_delete = st.selectbox("Choose a file to delete", sources, format_func=os.path.basename)
+        if st.button("🗑️ Delete file"):
+            if run_.delete_file(to_delete):
+                st.session_state.pop("indexed_file", None)
+                st.session_state.pop("temp_filepath", None)
+                st.session_state["flash"] = "File was deleted!"
+                st.rerun()
+            else:
+                st.error("Cannot delete the file")
+    else:
+        st.info("No files in the database.")
+
+    if "flash" in st.session_state:
+                    st.success(st.session_state.pop("flash"))
 
 # 2. Initialize Chat History (Session State)
 if "messages" not in st.session_state:
