@@ -39,6 +39,8 @@ class LLM:
             temperature=0.2 
         )
     )
+        if not response:
+           raise RuntimeError('Error, cannot produce the response')
         return response.text
 
       except requests.exceptions.RequestException as e:
