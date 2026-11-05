@@ -1,7 +1,8 @@
 import os
 import logging
 from typing import Dict, Any, Optional
-from langchain_community.document_loaders import  PyPDFLoader, TextLoader
+#from langchain_core.document_loaders import TextLoader
+from pypdf import PdfReader
 import chromadb
 
 from chromadb.errors import ChromaError
@@ -41,16 +42,24 @@ class ChromaDocumentManager:
 
 
     def get_file_find_its_type(self, file_path: str):
-        """Helper method to user pdf loader if user inputs a pdf file"""
-
-        #get file's extension
-        ext = ext = os.path.splitext(file_path)[1].lower()
+        """Helper method to use pdf loader if user inputs a pdf file"""
+        # Cleaned up duplicate assignment ext = ext = ...
+        ext = os.path.splitext(file_path)[1].lower()
+        
         if ext == ".pdf":
-         pages = PyPDFLoader(file_path).load()
-         return "\n\n".join(p.page_content for p in pages)
-        elif  ext == ".txt":
+            # 1. Initialize Reader
+            reader = PdfReader(file_path)
+            # 2. Loop through pages and extract text properly using extract_text()
+            extracted_pages = []
+            for page in reader.pages:
+                text = page.extract_text()
+                if text:
+                    extracted_pages.append(text)
+            return "\n\n".join(extracted_pages)
+            
+        elif ext == ".txt":
             with open(file_path, "r", encoding="utf-8") as f:
-             return f.read()
+                return f.read()
         else:
             raise ValueError(f"Unsupported file type: {ext}")
 
