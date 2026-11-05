@@ -24,9 +24,19 @@ class Run:
     )
 
     @staticmethod
-    def delete_file(file):
+    def delete_file(file) -> bool:
         """Delete a file from chroma db"""
-        chrom.delete_document(file_path=file)
+        print("DELETE path:", repr(file))
+        print("SOURCES in db:", {m["source"] for m in chrom.collection.get(include=["metadatas"])["metadatas"]})
+        print("COUNT before:", chrom.collection.count())
+        return chrom.delete_document(file_path=file)
+
+
+    @staticmethod
+    def get_sources()-> list:
+        """retrieve all sources from db"""
+        sources = chrom.list_sources()
+        return sources
         
     @staticmethod
     def invoke_llm(user_question):
