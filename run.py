@@ -19,11 +19,14 @@ class Run:
     def add_file(file):
         """Add file to chromadb"""
         chrom.load_and_index_txt(
-        file_path=file,
-        
-
+        file_path=file,  
         
     )
+
+    @staticmethod
+    def delete_file(file):
+        """Delete a file from chroma db"""
+        chrom.delete_document(file_path=file)
         
     @staticmethod
     def invoke_llm(user_question):
