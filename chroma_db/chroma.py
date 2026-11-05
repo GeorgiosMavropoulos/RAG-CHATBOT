@@ -135,3 +135,21 @@ class ChromaDocumentManager:
         except Exception as e:
             logging.error(f"Unexpected error occurred during query: {str(e)}")
             return None
+
+
+
+    def delete_document(self, file_path: str) -> bool:
+        """
+        Deletes all chunks that came from a specific file, using the 'source' metadata.
+        """
+        try:
+            logging.info(f"Deleting chunks from source: {file_path}")
+            self.collection.delete(where={"source": file_path})
+            logging.info(f"Deleted chunks for {file_path}.")
+            return True
+        except ChromaError as ce:
+            logging.error(f"Chroma DB error while deleting document: {str(ce)}")
+            return False
+        except Exception as e:
+            logging.error(f"Unexpected error while deleting document: {str(e)}")
+            return False
