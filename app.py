@@ -37,7 +37,7 @@ with st.sidebar:
                 
                 # Save the temp path to session state and run backend indexer
                 st.session_state["temp_filepath"] = temp_filepath
-                run_.add_file(temp_filepath)
+                run_.add_file(temp_filepath, display_name=uploaded_file.name)
                 
                 st.session_state["indexed_file"] = uploaded_file.name
                 
@@ -53,7 +53,7 @@ with st.sidebar:
             except Exception:
                 pass
         
-        # Καθαρισμός των μεταβλητών κατάστασης
+        # clear state variables
         st.session_state.pop("indexed_file", None)
         st.session_state.pop("temp_filepath", None)
 
@@ -69,13 +69,11 @@ with st.sidebar:
 
 #delete file
 with st.sidebar:
-    st.header("Delete File")
-    sources = run_.get_sources()
-
-    if sources:
-        to_delete = st.selectbox("Choose a file to delete", sources, format_func=os.path.basename)
+    docs = run_.get_sources()
+    if docs:
+        name = st.selectbox("Choose a file to delete", list(docs.keys()))
         if st.button("🗑️ Delete file"):
-            if run_.delete_file(to_delete):
+            if run_.delete_file(docs[name]):
                 st.session_state.pop("indexed_file", None)
                 st.session_state.pop("temp_filepath", None)
                 st.session_state["flash"] = "File was deleted!"
@@ -85,8 +83,8 @@ with st.sidebar:
     else:
         st.info("No files in the database.")
 
-    if "flash" in st.session_state:
-                    st.success(st.session_state.pop("flash"))
+        if "flash" in st.session_state:
+                        st.success(st.session_state.pop("flash"))
 
 # 2. Initialize Chat History (Session State)
 if "messages" not in st.session_state:
