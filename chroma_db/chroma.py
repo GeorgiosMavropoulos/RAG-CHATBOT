@@ -10,8 +10,7 @@ from langchain_text_splitters import RecursiveCharacterTextSplitter
 from pypdf import PdfReader
 
 # Configure logging
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
-
+logger = logging.getLogger(__name__)
 class ChromaDocumentManager:
     """
     A manager class to handle Chroma DB initialization, 
@@ -29,13 +28,13 @@ class ChromaDocumentManager:
     def _initialize_db(self) -> None:
         """Initializes the persistent Chroma DB client and gets or creates the collection."""
         try:
-            logging.info(f"Initializing Chroma DB persistent client at: {self.persist_directory}")
+            logger.info(f"Initializing Chroma DB persistent client at: {self.persist_directory}")
             self.client = chromadb.PersistentClient(path=self.persist_directory)
             
-            logging.info(f"Accessing collection: {self.collection_name}")
+            logger.info(f"Accessing collection: {self.collection_name}")
             self.collection = self.client.get_or_create_collection(name=self.collection_name)
         except Exception as e:
-            logging.error(f"Failed to initialize Chroma DB: {e!s}")
+            logger.error(f"Failed to initialize Chroma DB: {e!s}")
             raise RuntimeError(f"Database initialization failed: {e}")
 
 
@@ -69,18 +68,18 @@ class ChromaDocumentManager:
         """
  
         if not os.path.exists(file_path):
-            logging.error(f"File not found: {file_path}")
+            logger.error(f"File not found: {file_path}")
             return False
 
 
         try:
             #get file's type
-            logging.info(f"Reading file: {file_path}")
+            logger.info(f"Reading file: {file_path}")
             raw_text = self.get_file_find_its_type(file_path)
             print(raw_text[:1000])
 
             if not raw_text.strip():
-                logging.warning(f"File {file_path} is empty. Skipping indexing.")
+                logger.warning(f"File {file_path} is empty. Skipping indexing.")
                 return False
 
             # 2. Split the text into manageable chunks
@@ -89,7 +88,7 @@ class ChromaDocumentManager:
                 chunk_overlap=chunk_overlap
             )
             chunks = text_splitter.split_text(raw_text)
-            logging.info(f"Split text into {len(chunks)} chunks.")
+            logger.info(f"Split text into {len(chunks)} chunks.")
 
             # 3. Prepare data lists for vector insertion
             documents = []
@@ -104,23 +103,23 @@ class ChromaDocumentManager:
                 metadatas.append({"source": file_path, "name": name, "chunk_index": i})
 
             # 4. Insert chunks into Chroma DB collection
-            logging.info(f"Adding chunks to collection '{self.collection_name}'...")
+            logger.info(f"Adding chunks to collection '{self.collection_name}'...")
             self.collection.add(
                 documents=documents,
                 ids=ids,
                 metadatas=metadatas
             )
-            logging.info(f"Successfully indexed {len(chunks)} chunks from {base_filename}.")
+            logger.info(f"Successfully indexed {len(chunks)} chunks from {base_filename}.")
             return True
 
         except ChromaError as ce:
-            logging.error(f"Chroma DB error while adding documents: {ce!s}")
+            logger.error(f"Chroma DB error while adding documents: {ce!s}")
             return False
         except OSError as ioe:
-            logging.error(f"File I/O error while reading {file_path}: {ioe!s}")
+            logger.error(f"File I/O error while reading {file_path}: {ioe!s}")
             return False
         except Exception as e:
-            logging.error(f"Unexpected error occurred during indexing: {e!s}")
+            logger.error(f"Unexpected error occurred during indexing: {e!s}")
             return False
 
     def query_documents(self, query_text: str, n_results: int = 20) -> dict[str, Any] | None:
@@ -128,19 +127,19 @@ class ChromaDocumentManager:
         Queries the database for the most semantically relevant text chunks.
         """
         try:
-            logging.info(f"Executing query: '{query_text}' requesting {n_results} results.")
+            logger.info(f"Executing query: '{query_text}' requesting {n_results} results.")
             results = self.collection.query(
                 query_texts=[query_text],
                 n_results=n_results
             )
-            logging.info(f"Retrieved: {results['documents']}")
-            logging.info(f"Distances: {results['distances']}")
+            logger.info(f"Retrieved: {results['documents']}")
+            logger.info(f"Distances: {results['distances']}")
             return results
         except ChromaError as ce:
-            logging.error(f"Chroma DB query execution failed: {ce!s}")
+            logger.error(f"Chroma DB query execution failed: {ce!s}")
             return None
         except Exception as e:
-            logging.error(f"Unexpected error occurred during query: {e!s}")
+            logger.error(f"Unexpected error occurred during query: {e!s}")
             return None
 
 
@@ -164,11 +163,11 @@ class ChromaDocumentManager:
             before = self.collection.count()
             self.collection.delete(where={"source": file_path})
             after = self.collection.count()
-            logging.info(f"Deleted {before - after} chunks for source: {file_path}")
+            logger.info(f"Deleted {before - after} chunks for source: {file_path}")
             return after < before  
         except ChromaError as ce:
-            logging.error(f"Chroma DB error while deleting document: {ce!s}")
+            logger.error(f"Chroma DB error while deleting document: {ce!s}")
             return False
         except Exception as e:
-            logging.error(f"Unexpected error while deleting document: {e!s}")
+            logger.error(f"Unexpected error while deleting document: {e!s}")
             return False
