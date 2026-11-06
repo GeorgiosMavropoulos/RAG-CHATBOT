@@ -1,4 +1,4 @@
-import os
+
 from unittest.mock import patch
 
 import pytest
@@ -30,7 +30,7 @@ def mock_llm_instance():
 
 def test_init_missing_model_raises_value_error(monkeypatch):
     """Verify that missing model raises value errors"""
-    monkeypatch.delenv("MODEL_NAME", raising=False)
+    monkeypatch.delenv("GEMINI_MODEL", raising=False)
     with pytest.raises(ValueError, match="Model name has not been declared"):
         LLM() 
 
