@@ -1,15 +1,13 @@
-import os
 import logging
-from typing import Dict, Any, Optional
-#from langchain_core.document_loaders import TextLoader
-from pypdf import PdfReader
+import os
+from typing import Any
 
 import chromadb
 from chromadb.errors import ChromaError
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 
-
-
+#from langchain_core.document_loaders import TextLoader
+from pypdf import PdfReader
 
 # Configure logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -37,7 +35,7 @@ class ChromaDocumentManager:
             logging.info(f"Accessing collection: {self.collection_name}")
             self.collection = self.client.get_or_create_collection(name=self.collection_name)
         except Exception as e:
-            logging.error(f"Failed to initialize Chroma DB: {str(e)}")
+            logging.error(f"Failed to initialize Chroma DB: {e!s}")
             raise RuntimeError(f"Database initialization failed: {e}")
 
 
@@ -65,7 +63,7 @@ class ChromaDocumentManager:
 
         
 
-    def load_and_index_txt(self, file_path: str, chunk_size: int = 1000, display_name: str = None, chunk_overlap: int = 120) -> bool:
+    def load_and_index_txt(self, file_path: str, chunk_size: int = 1000, display_name: str | None = None, chunk_overlap: int = 120) -> bool:
         """
         Reads a text file, splits it into chunks, and indexes it into the vector database.
         """
@@ -116,16 +114,16 @@ class ChromaDocumentManager:
             return True
 
         except ChromaError as ce:
-            logging.error(f"Chroma DB error while adding documents: {str(ce)}")
+            logging.error(f"Chroma DB error while adding documents: {ce!s}")
             return False
-        except IOError as ioe:
-            logging.error(f"File I/O error while reading {file_path}: {str(ioe)}")
+        except OSError as ioe:
+            logging.error(f"File I/O error while reading {file_path}: {ioe!s}")
             return False
         except Exception as e:
-            logging.error(f"Unexpected error occurred during indexing: {str(e)}")
+            logging.error(f"Unexpected error occurred during indexing: {e!s}")
             return False
 
-    def query_documents(self, query_text: str, n_results: int = 20) -> Optional[Dict[str, Any]]:
+    def query_documents(self, query_text: str, n_results: int = 20) -> dict[str, Any] | None:
         """
         Queries the database for the most semantically relevant text chunks.
         """
@@ -139,10 +137,10 @@ class ChromaDocumentManager:
             logging.info(f"Distances: {results['distances']}")
             return results
         except ChromaError as ce:
-            logging.error(f"Chroma DB query execution failed: {str(ce)}")
+            logging.error(f"Chroma DB query execution failed: {ce!s}")
             return None
         except Exception as e:
-            logging.error(f"Unexpected error occurred during query: {str(e)}")
+            logging.error(f"Unexpected error occurred during query: {e!s}")
             return None
 
 
@@ -169,8 +167,8 @@ class ChromaDocumentManager:
             logging.info(f"Deleted {before - after} chunks for source: {file_path}")
             return after < before  
         except ChromaError as ce:
-            logging.error(f"Chroma DB error while deleting document: {str(ce)}")
+            logging.error(f"Chroma DB error while deleting document: {ce!s}")
             return False
         except Exception as e:
-            logging.error(f"Unexpected error while deleting document: {str(e)}")
+            logging.error(f"Unexpected error while deleting document: {e!s}")
             return False

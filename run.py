@@ -2,12 +2,14 @@
 
 from chroma_db.chroma import ChromaDocumentManager
 from prompts.prompt_templates import Prompts
+
 prompt_temps = Prompts()
 chrom = ChromaDocumentManager(
     collection_name="fake_story_collection"
 )
 
 from llm.llm_client import LLM
+
 client_llm = LLM()
 
 
@@ -57,6 +59,7 @@ class Run:
             query_text=question,
             n_results=20
         )
+    
         return results
 
    
