@@ -33,17 +33,11 @@ def mock_llm_instance(mock_env_model):
 # TESTS FOR __init__ (Initialization Errors)
 # =====================================================================
 
-def test_init_missing_model_raises_value_error():
-    """
-    Verifies that ValueError is raised if MODEL_NAME environment 
-    variable is missing or empty.
-    """
-    # clear=True strips out MODEL_NAME if it was set globally by CI
-    with patch.dict(os.environ, {}, clear=True):
-        with pytest.raises(ValueError) as exc_info:
-            LLM()
-        assert "Model name has not been declared" in str(exc_info.value)
-
+def test_init_missing_model_raises_value_error(monkeypatch):
+    """Verify that missing model raises value errors"""
+    monkeypatch.delenv("MODEL_NAME", raising=False)
+    with pytest.raises(ValueError, match="Model name has not been declared"):
+        LLM() 
 
 def test_init_api_call_error_raises_runtime_error(mock_env_model):
     """
