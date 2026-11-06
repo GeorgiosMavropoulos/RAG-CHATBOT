@@ -11,15 +11,10 @@ from llm.llm_client import LLM
 # FIXTURES
 # =====================================================================
 
-@pytest.fixture
-def mock_env_model():
-    """Provides a default fake model name for the tests matching MODEL_NAME."""
-    with patch.dict(os.environ, {"MODEL_NAME": "test-gemini-model"}):
-        yield "test-gemini-model"
 
 
 @pytest.fixture
-def mock_llm_instance(mock_env_model):
+def mock_llm_instance():
     """Creates an instance of LLM with the genai.Client mocked out to avoid real API calls."""
     with patch("google.genai.Client") as mock_client_cls:
         # Instantiate the class normally (safely wrapped inside a patch context)
@@ -39,7 +34,7 @@ def test_init_missing_model_raises_value_error(monkeypatch):
     with pytest.raises(ValueError, match="Model name has not been declared"):
         LLM() 
 
-def test_init_api_call_error_raises_runtime_error(mock_env_model):
+def test_init_api_call_error_raises_runtime_error():
     """
     Verifies that if google's client throws an API connection error during setup,
     it wraps it cleanly into a RuntimeError.
@@ -53,7 +48,7 @@ def test_init_api_call_error_raises_runtime_error(mock_env_model):
         assert "Failed to connect with the LLM" in str(exc_info.value)
 
 
-def test_init_unexpected_exception_propagates(mock_env_model):
+def test_init_unexpected_exception_propagates():
     """
     Verifies that generic system crashes (e.g., MemoryError or OS bugs) 
     bubble up raw instead of getting swallowed.
