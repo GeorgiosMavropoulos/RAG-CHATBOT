@@ -14,8 +14,7 @@ st.title("🤖 Chatbot with Document Upload")
 if "uploader_key" not in st.session_state:
     st.session_state["uploader_key"] = 0
 with st.sidebar:
-    st.header("📁 Upload Your Document. After closing the website, the doc will be lost. If you" \
-    "you want you can use my mock story from github.")
+
 
     #create a dynamic key file
     current_key = f"file_uploader_{st.session_state['uploader_key']}"
