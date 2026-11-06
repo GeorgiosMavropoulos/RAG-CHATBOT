@@ -26,7 +26,9 @@ jobs:
           pip install pytest ruff
 
       - name: Lint
-         run: ruff check . --fix || true
+        run: ruff check . --fix || true
 
       - name: Test
         run: pytest -v -m "not integration"
+        env:
+          GEMINI_API_KEY: "mock_api_key_for_testing" #trick the test with a mock api key
