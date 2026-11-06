@@ -13,8 +13,8 @@ from llm.llm_client import LLM
 
 @pytest.fixture
 def mock_env_model():
-    """Provides a default fake model name for the tests."""
-    with patch.dict(os.environ, {"GEMINI_MODEL": "test-gemini-model"}):
+    """Provides a default fake model name for the tests matching MODEL_NAME."""
+    with patch.dict(os.environ, {"MODEL_NAME": "test-gemini-model"}):
         yield "test-gemini-model"
 
 
@@ -22,7 +22,7 @@ def mock_env_model():
 def mock_llm_instance(mock_env_model):
     """Creates an instance of LLM with the genai.Client mocked out to avoid real API calls."""
     with patch("google.genai.Client") as mock_client_cls:
-        # Instantiate the class normally
+        # Instantiate the class normally (safely wrapped inside a patch context)
         instance = LLM()
         # Expose the mocked client to our tests so we can configure return values
         instance.mock_client = mock_client_cls.return_value
@@ -35,10 +35,11 @@ def mock_llm_instance(mock_env_model):
 
 def test_init_missing_model_raises_value_error():
     """
-    Verifies that ValueError is raised if GEMINI_MODEL environment 
+    Verifies that ValueError is raised if MODEL_NAME environment 
     variable is missing or empty.
     """
-    with patch.dict(os.environ, {"GEMINI_API_KEY": "fake-api-key"}, clear=True):
+    # clear=True strips out MODEL_NAME if it was set globally by CI
+    with patch.dict(os.environ, {}, clear=True):
         with pytest.raises(ValueError) as exc_info:
             LLM()
         assert "Model name has not been declared" in str(exc_info.value)
