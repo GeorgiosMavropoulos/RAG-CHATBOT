@@ -1,8 +1,11 @@
 import streamlit as st
-from  run import Run
+
+from run import Run
+
 run_ = Run()
-import tempfile
 import os
+import tempfile
+
 # Configure the page settings
 st.set_page_config(page_title="AI Chatbot with Document Upload", layout="centered")
 st.title("🤖 Chatbot with Document Upload")
@@ -99,6 +102,7 @@ for message in st.session_state.messages:
 
 # 4. Handle new user input (Chat Input)
 if user_input := st.chat_input("Type your message here..."):
+    print("CHAT BLOCK RUN with:", repr(user_input))
     
     # Display user message in chat message container
     with st.chat_message("user"):
@@ -116,7 +120,7 @@ if user_input := st.chat_input("Type your message here..."):
                 
         response_placeholder.markdown(bot_response)
         
-    st.session_state.messages.append({"role": "assistant", "content": bot_response})
+   
         
     # Add assistant response to chat history
     st.session_state.messages.append({"role": "assistant", "content": bot_response})

@@ -1,12 +1,9 @@
-import pytest
-from chroma_db.chroma import ChromaDocumentManager
 import logging
-
-
-
-from types import SimpleNamespace
 from unittest.mock import MagicMock
 
+import pytest
+
+from chroma_db.chroma import ChromaDocumentManager
 from llm.llm_client import LLM
 
 llm = LLM()

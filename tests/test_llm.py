@@ -1,12 +1,11 @@
 import os
+from unittest.mock import patch
+
 import pytest
-import logging
-from unittest.mock import MagicMock, patch
-from google.api_core import exceptions as google_exceptions
 import requests
+from google.api_core import exceptions as google_exceptions
 
-
-from llm.llm_client import LLM 
+from llm.llm_client import LLM
 
 # =====================================================================
 # FIXTURES

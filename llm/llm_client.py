@@ -1,11 +1,12 @@
 """This module calls initializes the LLM client"""
 import os
-from dotenv import load_dotenv
-from google.genai import types
-from google import genai
 
-from google.api_core import exceptions as google_exceptions
 import requests
+from dotenv import load_dotenv
+from google import genai
+from google.api_core import exceptions as google_exceptions
+from google.genai import types
+
 load_dotenv()
 class LLM:
     def __init__(self):
@@ -17,7 +18,7 @@ class LLM:
 
       except ValueError as e:
         print(f'Configuration error: {e}')
-        raise e
+        raise
 
       except google_exceptions.GoogleAPICallError as e:
             print(f"Error during API connection with LLM: {e}")
@@ -25,7 +26,7 @@ class LLM:
 
       except Exception as e:
             print(f"An unexpected error occured during connection: {e}")
-            raise e
+            raise
 
 
     def get_llm(self,question)->str:

@@ -1,11 +1,8 @@
-import pytest
-from ..chroma_db.chroma import ChromaDocumentManager
 import logging
 
+import pytest
 
-
-from unittest.mock import MagicMock, patch
-
+from ..chroma_db.chroma import ChromaDocumentManager
 from ..llm.llm_client import LLM
 
 llm = LLM()
@@ -80,7 +77,6 @@ def test_uppercase_extension_is_accepted(manager, tmp_path):
     path.write_text("hello", encoding="utf-8")
     assert manager.get_file_find_its_type(str(path)) == "hello"
 
-from unittest.mock import MagicMock, patch
 
 
 
