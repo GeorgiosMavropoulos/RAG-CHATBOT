@@ -1,7 +1,17 @@
-
+![UI Screenshot](assets/screenshot.png)
 RAG Chatbot with Gemini 3.5 Flash-Lite
 
 A powerful Retrieval-Augmented Generation (RAG) chatbot leveraging the high-throughput, low-latency Gemini 3.5 Flash-Lite model. The project orchestrates complex conversational workflows using LangGraph, handles document chunking and embeddings with LangChain, and utilizes ChromaDB as the vector database for efficient semantic search.
+
+## 🌐 Live Demo & Status
+
+🔗 **Live app:** https://rag-chatbot-vqswdz8kbikcvj66mrwz2h.streamlit.app/
+
+## Warning: 
+If you receive an error message indicating that the server is overloaded this means that the LLM faces too much traffic, try again later.
+I use a free API Gemini key.
+
+![CI](https://github.com/GeorgiosMavropoulos/RAG-CHATBOT/actions/workflows/ci.yml/)
 
 🚀 Features
 
@@ -10,6 +20,8 @@ A powerful Retrieval-Augmented Generation (RAG) chatbot leveraging the high-thro
 • Persistent Vector Storage: ChromaDB handles document indexing and semantic retrieval locally.
 • Production-Ready Client: Clean, object-oriented LLM initialization module using the official @google/genai SDK.
 • Streamlit UI Container: Interactive, native chat interface supporting on-the-fly custom document uploads.
+• Live Deployment: Hosted on Streamlit Community Cloud and actively running.
+• Automated Testing: Unit tests with pytest, executed on every push via CI/CD pipelines (GitHub Actions).
 
 🛠️ Tech Stack
 
@@ -19,6 +31,7 @@ A powerful Retrieval-Augmented Generation (RAG) chatbot leveraging the high-thro
 • Framework: LangChain
 • Vector Store: ChromaDB
 • Environment Management: Python Dotenv
+
 
 📋 Prerequisites & Installation
 
@@ -33,6 +46,18 @@ source .venv/bin/activate
 
 3. Install Dependencies:
 pip install -r requirements.txt
+
+## 🧪 Testing & CI/CD
+
+Tests are written with **pytest** and live in the `tests/` folder. External API calls are mocked, so the suite runs without a real API key.
+
+```bash
+pytest -v
+```
+
+On every push and pull request, a GitHub Actions workflow (`.github/workflows/ci.yml`) installs the dependencies and runs the full test suite. A failing test blocks the pipeline.
+
+Streamlit Community Cloud redeploys the app automatically after changes are pushed to the connected branch.
 
 
 4. Configuration
@@ -53,12 +78,13 @@ GEMINI_API_URL="https://generativelanguage.googleapis.com"
 ├── llm/                  # Contains client connections and models
 ├── prompts/              # Prompt text files & engineering configurations
 ├── chroma_db/            # Local SQLite storage directory for vector index files
+├── tests/                # Tests for llm call and chroma db interactios
 ├── requirements.txt      # Project library lockfile
 └── README.md             # Project documentation
 
 
 
-💻 Running the Application (Local Only)
+💻 Running the Application (Local)
 
 The application currently operates entirely in your local environment and is not hosted live online. To boot up the pipeline, run the following command in your terminal:
 # streamlit run app.py
@@ -91,4 +117,7 @@ The generated path is forwarded directly to main.py.
 As questions enter the chat box, Streamlit passes the query parameter down to the agent architecture.
 Your vector repository retrieves semantic references locally, formats them cleanly within your RAG system,
 updates context loops via LangGraph, and lets Gemini generate precise responses.
+
+4. Delete uploaded files:
+You can delete all your uploaded documents from streamlit UI.
 
