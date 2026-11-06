@@ -33,7 +33,7 @@ class ChromaDocumentManager:
             
             logger.info(f"Accessing collection: {self.collection_name}")
             self.collection = self.client.get_or_create_collection(name=self.collection_name)
-        except Exception as e:
+        except RuntimeError as e:
             logger.error(f"Failed to initialize Chroma DB: {e!s}")
             raise RuntimeError(f"Database initialization failed: {e}")
 
@@ -118,8 +118,8 @@ class ChromaDocumentManager:
         except OSError as ioe:
             logger.error(f"File I/O error while reading {file_path}: {ioe!s}")
             return False
-        except Exception as e:
-            logger.error(f"Unexpected error occurred during indexing: {e!s}")
+        except (ValueError, TypeError, AttributeError) as e:
+            logger.error(f"Data processing error occurred during indexing: {e!s}")
             return False
 
     def query_documents(self, query_text: str, n_results: int = 20) -> dict[str, Any] | None:
@@ -138,9 +138,9 @@ class ChromaDocumentManager:
         except ChromaError as ce:
             logger.error(f"Chroma DB query execution failed: {ce!s}")
             return None
-        except Exception as e:
-            logger.error(f"Unexpected error occurred during query: {e!s}")
-            return None
+        except (ValueError, TypeError, AttributeError) as e:
+                    logger.error(f"Query processing error occurred during indexing: {e!s}")
+                    return False
 
 
     def list_sources(self) -> list[str]:
@@ -168,6 +168,6 @@ class ChromaDocumentManager:
         except ChromaError as ce:
             logger.error(f"Chroma DB error while deleting document: {ce!s}")
             return False
-        except Exception as e:
-            logger.error(f"Unexpected error while deleting document: {e!s}")
+        except (ValueError, TypeError) as e:
+            logger.error(f"Invalid arguments provided for deletion: {e!s}")
             return False
