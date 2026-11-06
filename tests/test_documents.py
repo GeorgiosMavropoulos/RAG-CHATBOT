@@ -2,8 +2,8 @@ import logging
 
 import pytest
 
-from ..chroma_db.chroma import ChromaDocumentManager
-from ..llm.llm_client import LLM
+from chroma_db.chroma import ChromaDocumentManager
+from llm.llm_client import LLM
 
 llm = LLM()
 
