@@ -26,7 +26,7 @@ jobs:
           pip install pytest ruff
 
       - name: Lint
-         run: ruff check . --fix || true
+        run: "ruff check . --fix || true"
 
       - name: Test
         run: pytest -v -m "not integration"
