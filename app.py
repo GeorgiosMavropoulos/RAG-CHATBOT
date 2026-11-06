@@ -48,9 +48,8 @@ with st.sidebar:
         else:
             st.sidebar.info(f"📁 '{uploaded_file.name}' is already loaded in Vector DB.")
 
-        if st.sidebar.button("❌ Clear & Reset DB"):
-        # rempve file from disk
-         if "temp_filepath" in st.session_state and os.path.exists(st.session_state["temp_filepath"]):
+        if st.sidebar.button("❌ Clear & Reset DB") and "temp_filepath" in st.session_state and os.path.exists(st.session_state["temp_filepath"]):
+        # remove file from disk        
             try:
                 os.remove(st.session_state["temp_filepath"])
             except OSError:  # Specifically handles file removal failures
