@@ -10,3 +10,7 @@ gemini.json
 # Python / Virtual environments
 .venv/
 __pycache__/
+
+.ruff_cache/
+
+.pytest_cache/
