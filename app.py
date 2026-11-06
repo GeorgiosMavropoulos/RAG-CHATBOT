@@ -53,8 +53,8 @@ with st.sidebar:
          if "temp_filepath" in st.session_state and os.path.exists(st.session_state["temp_filepath"]):
             try:
                 os.remove(st.session_state["temp_filepath"])
-            except Exception:
-                pass
+            except OSError:  # Specifically handles file removal failures
+               raise OSError('Failed to remove file')
         
         # clear state variables
         st.session_state.pop("indexed_file", None)
