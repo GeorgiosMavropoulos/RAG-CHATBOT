@@ -1,18 +1,8 @@
-import os
 import pytest
 
 @pytest.fixture(autouse=True)
-def mock_llm_environment():
-    """Automatically mock LLM environment variables for all tests."""
-    # Replace 'MODEL_NAME' with the exact env variable your code looks for 
-    # (e.g., 'OPENAI_MODEL', 'ANTHROPIC_MODEL', etc.)
-    os.environ["MODEL_NAME"] = "mock-model-xyz"
-    
-    # It's also a good idea to mock API keys so tests don't make real web requests
-    os.environ["OPENAI_API_KEY"] = "mock-api-key"
-    
-    yield
-    
-    # Clean up after tests finish
-    if "MODEL_NAME" in os.environ:
-        del os.environ["MODEL_NAME"]
+def mock_llm_environment(monkeypatch):
+    """Mock Model name, gemini api key and google api key"""
+    monkeypatch.setenv("GEMINI_MODEL", "test-gemini-model")
+    monkeypatch.setenv("GEMINI_API_KEY", "mock-api-key")
+    monkeypatch.delenv("GOOGLE_API_KEY", raising=False)
