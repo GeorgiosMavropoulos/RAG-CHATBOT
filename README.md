@@ -69,14 +69,7 @@ GEMINI_MODEL="gemini-3.5-flash-lite"
 GEMINI_API_URL="https://generativelanguage.googleapis.com"
 ```
 
-**Streamlit Community Cloud:** Add the same variables under **Settings → Secrets** in the app dashboard, in TOML format:
 
-```toml
-GEMINI_API_KEY = "AIzaSyYourActualGoogleAIStudioKeyHere"
-GEMINI_MODEL = "gemini-3.5-flash-lite"
-```
-
-Do not commit `.env` or `.streamlit/secrets.toml` to the repository.
 
 ## 🧪 Testing & CI/CD
 
@@ -119,8 +112,6 @@ streamlit run app.py
 ```
 
 Create the `.env` file described in Configuration first.
-
-> **Note:** On Streamlit Community Cloud, uploaded documents are stored in the container's temporary filesystem and are cleared when the app restarts or redeploys.
 
 ## ⚙️ How It Works
 
