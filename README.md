@@ -14,6 +14,8 @@ A powerful Retrieval-Augmented Generation (RAG) chatbot leveraging the high-thro
 
 If you receive an error message indicating that the server is overloaded, the LLM is facing too much traffic. Try again later. This app uses a free Gemini API key.
 
+If you see a message this app is sleeping, click on wake it up. It's due to inactivity.
+
 ## 🚀 Features
 
 - **Fast Inference:** Powered by Google's gemini-3.5-flash-lite for near-instant responses.
